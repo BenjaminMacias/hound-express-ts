@@ -1,3 +1,155 @@
+# Hound Express (TypeScript)
+
+## 🧾 Descripción del proyecto
+**Hound Express TS** es una API REST escrita en **Node.js + Express + TypeScript** para la gestión de envíos/paquetería.  
+Incluye endpoints para **autenticación (JWT)**, **CRUD de envíos**, y **seguimiento por código**.  
+El diseño está modularizado (rutas → controladores → servicios → capa de datos) para poder cambiar fácilmente la base de datos o el proveedor de persistencia.
+
+---
+
+## 🧰 Tecnologías utilizadas
+- **Node.js** + **Express**
+- **TypeScript**
+- **JWT** para autenticación
+- **dotenv** para variables de entorno
+- **cors**, **helmet**, **morgan** como middlewares comunes
+- (Opcional) Conector a BD via `DATABASE_URL` (Mongo/Postgres/MySQL, etc.)
+- Herramientas de desarrollo (sugeridas): `ts-node-dev` / `nodemon`, ESLint, Prettier, Jest
+
+---
+
+## ⚙️ Instrucciones de instalación y uso
+
+### 1) Clonar e instalar dependencias
+```bash
+git clone https://github.com/BenjaminMacias/hound-express-ts.git
+cd hound-express-ts
+npm install
+
+Variables de entorno
+Crea un archivo .env en la raíz del proyecto:
+
+
+# .env
+PORT=4000
+NODE_ENV=development
+
+# Clave para firmar/validar JWT
+JWT_SECRET=super_secret_key_change_me
+
+# (Opcional) URL de base de datos. El proyecto puede funcionar en memoria si no se define.
+# DATABASE_URL=mongodb://localhost:27017/hound_express
+# DATABASE_URL=postgres://user:pass@localhost:5432/hound_express
+# DATABASE_URL=mysql://user:pass@localhost:3306/hound_express
+
+Desarrollo con TypeScript en caliente
+
+npm run dev
+Servidor en: http://localhost:4000
+
+Compilar a JavaScript y ejecutar en producción
+
+npm run build
+npm start
+# o
+npm run start:prod
+🔎 Scripts típicos (ajústalos a tu package.json):
+
+dev: arranca con ts-node-dev o nodemon observando src/**/*.ts
+
+build: tsc
+
+start: node dist/server.js
+
+start:prod: igual que start (opcional)
+
+🧪 Ejemplos de uso (cURL)
+Para endpoints protegidos añade el header:
+Authorization: Bearer <TU_TOKEN_JWT>
+
+Auth
+Registro
+
+
+curl -X POST http://localhost:4000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name":"Jane Doe",
+    "email":"jane@example.com",
+    "password":"Secret123!"
+  }'
+Login
+
+
+curl -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email":"jane@example.com",
+    "password":"Secret123!"
+  }'
+# Respuesta: { "token": "<JWT>" }
+Envíos (Shipments)
+Crear envío
+
+
+curl -X POST http://localhost:4000/api/shipments \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code":"HX-202401-0001",
+    "sender":"Acme Inc.",
+    "receiver":"Jane Doe",
+    "origin":"CDMX",
+    "destination":"GDL",
+    "status":"created",
+    "weight": 3.2
+  }'
+Listar envíos
+
+
+curl "http://localhost:4000/api/shipments?status=created&search=GDL&page=1&limit=20" \
+  -H "Authorization: Bearer <TOKEN>"
+Obtener por ID
+
+
+curl http://localhost:4000/api/shipments/64f2c1... \
+  -H "Authorization: Bearer <TOKEN>"
+Actualizar estado
+
+
+curl -X PATCH http://localhost:4000/api/shipments/64f2c1... \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{ "status":"in_transit" }'
+Eliminar
+
+
+curl -X DELETE http://localhost:4000/api/shipments/64f2c1... \
+  -H "Authorization: Bearer <TOKEN>"
+Tracking
+Seguimiento público por código
+
+
+curl http://localhost:4000/api/tracking/HX-202401-0001
+# → Últimos estatus / checkpoints asociados al envío
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # hound-express-ts
 
 Plantilla mínima pero lista para producción para crear **APIs REST con Express + TypeScript**.  
